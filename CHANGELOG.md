@@ -2,6 +2,11 @@
 
 All notable changes follow semantic versioning. Stable GitHub Releases publish the corresponding npm version after validation.
 
+## 1.0.1 — 2026-09-30
+
+- Fix the release workflow to resolve the validated tarball as an explicit local file, checking that it exists before publication.
+- First npm publication; version 1.0.0's upload failed before reaching the registry.
+
 ## 1.0.0 — 2026-09-30
 
 - Independent React JSON and metadata inspector with a strict TypeScript API.

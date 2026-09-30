@@ -98,7 +98,7 @@ export function App() {
           <a href="#variations">Variations</a>
           <a href="#getting-started">Quick start</a>
         </nav>
-        <span className="version-badge"><span />v1.0.0</span>
+        <span className="version-badge"><span />v1.0.1</span>
       </header>
 
       <main>

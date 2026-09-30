@@ -37,6 +37,9 @@ jobs:
           name: npm-package
           path: release-package
       - name: Publish the validated tarball
-        run: npm publish "release-package/json-glance-$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version').tgz" --access public --provenance
+        run: |
+          tarball="./release-package/json-glance-$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version').tgz"
+          test -f "$tarball"
+          npm publish "$tarball" --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,10 +1,10 @@
 {
   "name": "json-glance",
-  "version": "1.0.0",
-  "size": 21652,
+  "version": "1.0.1",
+  "size": 21654,
   "unpackedSize": 70571,
-  "shasum": "71c123fa21359cc4402a10ec3f27b840edd813eb",
-  "integrity": "sha512-btkI+M+Nw/N5RMTiwvagqFnBYVuJtIoWTKrOIw6hipfprLyu2g3pWKOitFZlu5X3mGRM9/81ybaw1yYGsUIuNQ==",
+  "shasum": "c88f1c615c8a1bf0c4f95248c2fa2fdd765025e6",
+  "integrity": "sha512-HoyAJkYeLt0+Ha8ZSmKkF4p8CSGKHyNO6t477HWxLKqwP6xKD8QRqedZHOsbmg1YIWjCUUMqO0946QQpnh6dEw==",
   "files": [
     {
       "path": "LICENSE",

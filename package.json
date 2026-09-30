@@ -1,6 +1,6 @@
 {
   "name": "json-glance",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight, accessible React inspector for JSON and structured metadata.",
   "type": "module",
   "license": "MIT",

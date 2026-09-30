@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+const { version } = JSON.parse(await readFile('package.json', 'utf8'));
+const tag = process.env.RELEASE_TAG;
+assert(tag, 'RELEASE_TAG is required (for example v1.0.0).');
+assert(/^v\d+\.\d+\.\d+$/.test(tag), 'Only stable semantic version tags can publish.');
+assert.equal(tag, `v${version}`, 'Release tag must match package.json version.');
+assert.equal(execFileSync('git', ['rev-parse', `${tag}^{commit}`], { encoding: 'utf8' }).trim(), execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), 'Checkout must match the release tag.');
+execFileSync('git', ['merge-base', '--is-ancestor', 'HEAD', 'origin/main']);
+console.log(`Release ${tag} matches package version and belongs to main.`);

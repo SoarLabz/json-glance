@@ -1,0 +1,94 @@
+{
+  "name": "json-glance",
+  "version": "1.0.0",
+  "description": "A lightweight, accessible React inspector for JSON and structured metadata.",
+  "type": "module",
+  "license": "MIT",
+  "author": "SoarLabz",
+  "homepage": "https://github.com/SoarLabz/json-glance#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoarLabz/json-glance.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SoarLabz/json-glance/issues"
+  },
+  "keywords": [
+    "json",
+    "react",
+    "metadata",
+    "inspector",
+    "viewer",
+    "typescript",
+    "accessible"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "workspaces": [
+    "playground"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "build:playground": "npm run build && npm run build --workspace @json-glance/playground",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit && tsc -p playground/tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:package": "node scripts/verify-package.mjs",
+    "check": "npm run build && npm run lint && npm run typecheck && npm test && npm run build:playground && npm run test:package",
+    "prepack": "npm run build",
+    "release:check": "node scripts/release-check.mjs"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@playwright/test": "^1.63.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.19.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^16.5.0",
+    "jsdom": "^27.4.0",
+    "publint": "^0.3.24",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.1.0"
+  },
+  "packageManager": "npm@11.20.0"
+}

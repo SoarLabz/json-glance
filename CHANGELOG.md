@@ -2,7 +2,7 @@
 
 All notable changes follow semantic versioning. Stable GitHub Releases publish the corresponding npm version after validation.
 
-## 1.0.0 — Unreleased
+## 1.0.0 — 2026-09-30
 
 - Independent React JSON and metadata inspector with a strict TypeScript API.
 - Search across indexed keys, values and JSONPaths, with matching text highlights.

@@ -1,10 +1,10 @@
 {
   "name": "json-glance",
   "version": "1.0.0",
-  "size": 21758,
-  "unpackedSize": 70838,
-  "shasum": "e4bcaec041474ba304119759723f49de2f07add9",
-  "integrity": "sha512-7hzywI1ZqJ+9KvWpYp0EdxaDwlhBQhhwk51mRRDlTmWfIzMURnTVe7kUxY9c3rNQDDlqkU4x9AzFK/bFUBOJYw==",
+  "size": 21652,
+  "unpackedSize": 70571,
+  "shasum": "71c123fa21359cc4402a10ec3f27b840edd813eb",
+  "integrity": "sha512-btkI+M+Nw/N5RMTiwvagqFnBYVuJtIoWTKrOIw6hipfprLyu2g3pWKOitFZlu5X3mGRM9/81ybaw1yYGsUIuNQ==",
   "files": [
     {
       "path": "LICENSE",
@@ -13,7 +13,7 @@
     },
     {
       "path": "README.md",
-      "size": 15882,
+      "size": 15615,
       "mode": 420
     },
     {

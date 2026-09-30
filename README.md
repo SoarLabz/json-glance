@@ -8,8 +8,6 @@ React is the only runtime dependency. The package includes strict TypeScript dec
 
 ## Installation
 
-The initial `1.0.0` release is prepared for publication. The npm name was available when checked on September 30, 2026; the package has not been published yet. After the first release:
-
 ```sh
 npm install json-glance
 ```
@@ -277,7 +275,7 @@ Publication runs only when a stable GitHub Release is **published** for a tag su
 
 Maintainers configure **`NPM_TOKEN` exclusively as a GitHub Actions Secret**. The workflow uses that secret for npm authentication. Do not put credentials in source files, `.npmrc`, commits, logs or release notes.
 
-The initial project setup does not create a release or publish the package. For the first publication, configure the secret, confirm the validated commit and package version, then publish the matching GitHub Release. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development and release checklist.
+To publish a version, configure the secret, confirm the validated commit and package version, then publish the matching GitHub Release. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development and release checklist.
 
 ## License
 

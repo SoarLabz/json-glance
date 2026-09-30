@@ -12,5 +12,6 @@ All notable changes follow semantic versioning. Stable GitHub Releases publish t
 - Iterative, bounded data snapshots and virtualized large trees.
 - Explicit handling of empty containers, undefined, bigint, circular references and accessors.
 - Light, dark and automatic themes with scoped CSS variables.
+- Optional tree-only mode and independent toolbar, footer and path navigation visibility.
 - Fourteen synthetic playground examples and compact configuration variations.
 - Unit, component, SSR, external consumer and desktop/mobile browser checks.

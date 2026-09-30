@@ -1,10 +1,10 @@
 {
   "name": "json-glance",
   "version": "1.0.0",
-  "size": 20834,
-  "unpackedSize": 67527,
-  "shasum": "bd45664bbc7d9e6013dfb58a823e0d334df94be7",
-  "integrity": "sha512-qjoKKvAZZ1cBbxPaTKXF9RaTDoCTNMAURVqugmaM4HvvSWcFMuIDnRadTTGnm0dR4R0lBXD0N1aP7xziMzeAaw==",
+  "size": 21673,
+  "unpackedSize": 70399,
+  "shasum": "1694d871ef4ce6512c03b91a9a1214641b4039b2",
+  "integrity": "sha512-jevRGLlD0OiBvRd9T17lE/TR4fX7LSMUdAXKkOF1YtU6dhEGals696pVbHLn1mFK5L9McRqF56W8pHw8OJwXYw==",
   "files": [
     {
       "path": "LICENSE",
@@ -13,7 +13,7 @@
     },
     {
       "path": "README.md",
-      "size": 14101,
+      "size": 15882,
       "mode": 420
     },
     {
@@ -53,7 +53,7 @@
     },
     {
       "path": "dist/JsonGlance.js",
-      "size": 18463,
+      "size": 19106,
       "mode": 420
     },
     {
@@ -73,7 +73,7 @@
     },
     {
       "path": "dist/types.d.ts",
-      "size": 2477,
+      "size": 2925,
       "mode": 420
     },
     {

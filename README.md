@@ -56,6 +56,32 @@ export function MetadataPanel() {
 
 This is a read-only inspector. It does not edit data, fetch remote resources or contain transaction-specific rules.
 
+### Tree-only view
+
+Use `minimal` to embed just the data tree in your own card or detail panel:
+
+```tsx
+<JsonGlance data={metadata} rootLabel="metadata" minimal />
+```
+
+The preset hides the toolbar, selected-path footer and **Go to path** form. Individual expansion, keyboard navigation, row copying and type labels remain available. Long strings still open their full value when requested; primitive rows also open Details with Enter or Space. An opened detail panel includes its own close action when the footer is hidden. Use `copyable={false}` or `showTypes={false}` to simplify the rows further.
+
+Control each surrounding section independently when you need a different combination:
+
+```tsx
+<JsonGlance
+  data={metadata}
+  showToolbar={false}
+  showFooter={false}
+  showPathNavigation={false}
+/>
+
+// Restore only the toolbar while using the minimal preset.
+<JsonGlance data={metadata} minimal showToolbar />
+```
+
+Each section defaults to `!minimal`; an explicit boolean overrides the preset. `searchable={false}` hides the search field within the toolbar. It leaves the toolbar's global expand, collapse and copy actions visible unless `showToolbar={false}` or `minimal` also hides that section.
+
 ### Keyboard controls
 
 Tab into the tree, then use:
@@ -91,7 +117,11 @@ This is exact indexed-path navigation, not a JSONPath query language: wildcards,
 | --- | --- | --- | --- |
 | `data` | `unknown` | Required | The value to inspect. Use an immutable replacement when data changes. |
 | `defaultExpandedDepth` | `number` | `2` | Open containers whose depth is less than this value. Root depth is `0`; `0` starts collapsed. Clamped to `0–65`. |
-| `searchable` | `boolean` | `true` | Show key, value and path search. |
+| `minimal` | `boolean` | `false` | Tree-only preset: hide the toolbar, footer and path form unless explicitly overridden. Row features remain available. |
+| `showToolbar` | `boolean` | `!minimal` | Show the toolbar with optional search, global expansion and JSON copying. |
+| `showFooter` | `boolean` | `!minimal` | Show the selected path, counts, Details action and optional path copying. |
+| `showPathNavigation` | `boolean` | `!minimal` | Show the Go to path form. |
+| `searchable` | `boolean` | `true` | Show key, value and path search when the toolbar is visible. |
 | `copyable` | `boolean` | `true` | Enable JSON, selected value and selected path copying. |
 | `showTypes` | `boolean` | `true` | Show type labels alongside syntax colors. |
 | `rootLabel` | `string` | `'root'` | Display label of the root row. |
@@ -226,7 +256,7 @@ npm ci
 npm run dev
 ```
 
-Open [http://localhost:4173](http://localhost:4173). The playground imports the library as a package and includes simple objects, transaction-style synthetic metadata, nested structures, large arrays, long strings, empty values, URLs, dates, JavaScript edge cases and a larger performance dataset. Its controls demonstrate theme, depth, type labels, copying, search and preview settings.
+Open [http://localhost:4173](http://localhost:4173). The playground imports the library as a package and includes simple objects, transaction-style synthetic metadata, nested structures, large arrays, long strings, empty values, URLs, dates, JavaScript edge cases and a larger performance dataset. Its controls demonstrate the **Tree only** preset, theme, depth, type labels, copying, search and preview settings. The React code tab updates with your chosen settings.
 
 The development command builds once, watches TypeScript and CSS changes, and starts Vite on port 4173. The playground consumes the resulting package build as you edit the library.
 

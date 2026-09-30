@@ -6,10 +6,10 @@ Validated on September 30, 2026, using Node.js 22.23.1 and a clean `npm ci` inst
 | --- | --- |
 | ESLint | Passed with zero warnings. |
 | Strict TypeScript | Passed for the library, playground, unit tests and browser tests. |
-| Unit/component/release tests | 63 passed across four files. |
+| Unit/component/release tests | 68 passed across four files. |
 | Library build | Passed; ESM, declarations and CSS generated. |
 | Playground production build | Passed, using the package exports rather than source aliases. |
-| Chromium desktop/mobile | 16 passed, no skipped scenarios. |
+| Chromium desktop/mobile | 20 passed, no skipped scenarios. |
 | External React 18.3.1 consumer | Tarball install, ESM import, CSS resolution, SSR and strict consumer typecheck passed. |
 | External React 19.2.4 consumer | Tarball install, ESM import, CSS resolution, SSR and strict consumer typecheck passed. |
 | publint | Passed without packaging findings. |
@@ -20,11 +20,11 @@ The archive's exact size, hashes and file manifest are recorded in [package-cont
 
 ## Browser coverage
 
-The browser suite verifies all fourteen synthetic examples, safe getter/circular inspection, search through twenty collapsed levels, real clipboard JSON/path/value copying, full long string details, light/dark/system themes, configuration changes, generated example code, keyboard navigation after pointer expansion and layouts without page-level horizontal overflow.
+The browser suite verifies all fourteen synthetic examples, safe getter/circular inspection, search through twenty collapsed levels, real clipboard JSON/path/value copying, full long string details, light/dark/system themes, configuration changes, generated example code, keyboard navigation after pointer expansion and layouts without page-level horizontal overflow. Tree-only coverage checks hidden surrounding controls, removal of hidden search filtering, keyboard access to row copying, explicit full-value details with a close action, and restoration of normal controls.
 
 For the performance example, expanding all 27,001 indexed nodes keeps fewer than fifty rows mounted. The near-end path `$[2998].name` is selected, brought into the rendered window and focused. This verifies bounded DOM rendering and useful navigation; it is not a universal latency benchmark.
 
-Desktop and mobile screenshots are saved as [playground.png](playground.png) and [playground-mobile.png](playground-mobile.png). These were also visually inspected. Browser coverage uses Chromium; Firefox, Safari and assistive technology combinations have not been separately tested.
+Desktop and mobile screenshots are saved as [playground.png](playground.png) and [playground-mobile.png](playground-mobile.png). The tree-only dark example is saved as [playground-minimal.png](playground-minimal.png). These were also visually inspected. Browser coverage uses Chromium; Firefox, Safari and assistive technology combinations have not been separately tested.
 
 ## Extraction boundary
 

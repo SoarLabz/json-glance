@@ -142,6 +142,79 @@ describe('JsonGlance', () => {
     expect(tree().querySelector('.jg-type')).toBeNull();
   });
 
+  it('shows only the tree in minimal mode while retaining node expansion and keyboard copying', async () => {
+    const user = userEvent.setup();
+    const copyText = vi.fn<(text: string) => Promise<void>>().mockResolvedValue(undefined);
+    render(<JsonGlance data={fixture} minimal defaultExpandedDepth={1} copyText={copyText} />);
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Expand all' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Details' })).not.toBeInTheDocument();
+    expect(tree().parentElement?.querySelector('.jg-footer')).toBeNull();
+    expect(tree().querySelector('.jg-type')).toBeInTheDocument();
+    const root = row('$');
+    if (!(root instanceof HTMLElement)) throw new Error('Missing root');
+    root.focus();
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'Copy value at $' })).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(copyText).toHaveBeenLastCalledWith(JSON.stringify(fixture, (_key, value: unknown) => value === undefined ? '[Undefined]' : value, 2));
+    await user.click(screen.getByRole('button', { name: 'Expand $.customer' }));
+    expect(row('$.customer.name')).toBeInTheDocument();
+  });
+
+  it('allows toolbar, footer and path navigation to be configured independently', () => {
+    const view = render(<JsonGlance data={fixture} minimal showToolbar />);
+    expect(screen.getByRole('textbox', { name: 'Search JSON' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Details' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: 'Go to path' })).not.toBeInTheDocument();
+    view.rerender(<JsonGlance data={fixture} minimal showFooter />);
+    expect(screen.queryByRole('textbox', { name: 'Search JSON' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Details' })).toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: 'Go to path' })).not.toBeInTheDocument();
+    view.rerender(<JsonGlance data={fixture} minimal showPathNavigation />);
+    expect(screen.getByRole('textbox', { name: 'Go to path' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Details' })).not.toBeInTheDocument();
+    view.rerender(<JsonGlance data={fixture} showToolbar={false} showFooter={false} showPathNavigation={false} />);
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Details' })).not.toBeInTheDocument();
+    expect(tree()).toBeInTheDocument();
+  });
+
+  it('reveals unfiltered data and hides stale path errors when surrounding controls are hidden', async () => {
+    const user = userEvent.setup();
+    const view = render(<JsonGlance data={fixture} />);
+    await user.type(screen.getByRole('textbox', { name: 'Search JSON' }), 'recife');
+    expect(row('$.flags')).not.toBeInTheDocument();
+    await user.type(screen.getByLabelText('Go to path'), '$.absent');
+    await user.click(screen.getByRole('button', { name: 'Navigate to path' }));
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    view.rerender(<JsonGlance data={fixture} minimal />);
+    expect(row('$.flags')).toBeInTheDocument();
+    expect(tree().querySelector('mark')).toBeNull();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(tree().parentElement?.querySelector('.jg-search-summary')).toBeNull();
+  });
+
+  it('can open and close full string details without the footer', async () => {
+    const user = userEvent.setup();
+    const value = 'x'.repeat(200);
+    render(<JsonGlance data={{ long: value }} minimal stringLimit={32} />);
+    await user.click(screen.getByRole('button', { name: 'Full value' }));
+    expect(screen.getByText(value)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Close details' }));
+    expect(screen.queryByText(value)).not.toBeInTheDocument();
+    expect(row('$.long')).toHaveFocus();
+  });
+
+  it('keeps safety warnings and copy failures visible in minimal mode', async () => {
+    const user = userEvent.setup();
+    const copyText = vi.fn<(text: string) => Promise<void>>().mockRejectedValue(new Error('Clipboard denied.'));
+    render(<JsonGlance data={fixture} minimal maxNodes={2} copyText={copyText} />);
+    expect(tree().parentElement?.querySelector('.jg-warning')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Copy value at $' }));
+    expect(screen.getAllByText('Clipboard denied.').length).toBeGreaterThan(0);
+  });
+
   it('renders safely on the server with circular values and getters', () => {
     const data: Record<string, unknown> = {};
     data['self'] = data;

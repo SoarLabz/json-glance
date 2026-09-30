@@ -46,6 +46,7 @@ export function App() {
   const [depth, setDepth] = useState(2);
   const [stringLimit, setStringLimit] = useState(160);
   const [maxHeight, setMaxHeight] = useState(480);
+  const [minimal, setMinimal] = useState(false);
   const [searchable, setSearchable] = useState(true);
   const [copyable, setCopyable] = useState(true);
   const [showTypes, setShowTypes] = useState(true);
@@ -58,13 +59,14 @@ export function App() {
 
   if (!example) return null;
 
-  const code = `import { JsonGlance } from 'json-glance';\nimport 'json-glance/styles.css';\n\n<JsonGlance\n  data={data}\n  rootLabel={${JSON.stringify(rootLabel || 'root')}}\n  theme="${theme}"\n  defaultExpandedDepth={${depth}}\n  maxHeight={${maxHeight}}\n  stringLimit={${stringLimit}}\n  searchable={${searchable}}\n  copyable={${copyable}}\n  showTypes={${showTypes}}${example.maxNodes ? `\n  maxNodes={${example.maxNodes}}` : ''}\n  onSelect={({ path, value, type }) => {\n    console.log(path, value, type);\n  }}\n/>`;
+  const code = `import { JsonGlance } from 'json-glance';\nimport 'json-glance/styles.css';\n\n<JsonGlance\n  data={data}\n  rootLabel={${JSON.stringify(rootLabel || 'root')}}\n  theme="${theme}"\n  defaultExpandedDepth={${depth}}\n  maxHeight={${maxHeight}}\n  stringLimit={${stringLimit}}\n  minimal={${minimal}}\n  searchable={${searchable}}\n  copyable={${copyable}}\n  showTypes={${showTypes}}${example.maxNodes ? `\n  maxNodes={${example.maxNodes}}` : ''}\n  onSelect={({ path, value, type }) => {\n    console.log(path, value, type);\n  }}\n/>`;
 
   function resetSettings() {
     setTheme('light');
     setDepth(2);
     setStringLimit(160);
     setMaxHeight(480);
+    setMinimal(false);
     setSearchable(true);
     setCopyable(true);
     setShowTypes(true);
@@ -166,6 +168,7 @@ export function App() {
                   maxHeight={maxHeight}
                   maxDepth={64}
                   maxNodes={example.maxNodes ?? 50000}
+                  minimal={minimal}
                   searchable={searchable}
                   copyable={copyable}
                   showTypes={showTypes}
@@ -193,6 +196,7 @@ export function App() {
                 <label className="config-field" htmlFor="string-preview"><span>String preview <output>{stringLimit} chars</output></span><select id="string-preview" aria-label="String preview" value={stringLimit} onChange={(event) => setStringLimit(Number(event.currentTarget.value))}><option value={80}>80 characters</option><option value={160}>160 characters</option><option value={320}>320 characters</option><option value={640}>640 characters</option></select></label>
                 <label className="config-field" htmlFor="inspector-height"><span>Inspector height <output>{maxHeight} px</output></span><input id="inspector-height" aria-label="Inspector height" type="range" min="280" max="680" step="40" value={maxHeight} onChange={(event) => setMaxHeight(Number(event.currentTarget.value))} /></label>
                 <div className="toggle-group">
+                  <Toggle label="Tree only" description="Hide surrounding controls" checked={minimal} onChange={setMinimal} />
                   <Toggle label="Search" description="Find keys and values" checked={searchable} onChange={setSearchable} />
                   <Toggle label="Copy actions" description="Values, paths, and JSON" checked={copyable} onChange={setCopyable} />
                   <Toggle label="Type labels" description="A little extra context" checked={showTypes} onChange={setShowTypes} />
@@ -206,7 +210,7 @@ export function App() {
         <section id="variations" className="variations-section" aria-labelledby="variations-title">
           <div className="section-heading"><div><p className="eyebrow subtle">A GOOD FIT, EVERYWHERE</p><h2 id="variations-title">Your interface. Your inspector.</h2></div><p>One component, a few different perspectives.</p></div>
           <div className="variation-grid">
-            <article className="variation-card"><div className="variation-caption"><span className="variation-index">01</span><div><h3>Quiet & compact</h3><p>Just the data, with fewer controls.</p></div></div><JsonGlance data={galleryData} defaultExpandedDepth={1} searchable={false} copyable={false} showTypes={false} rootLabel="response" theme="light" maxHeight={220} /><code>searchable={'{false}'} · showTypes={'{false}'}</code></article>
+            <article className="variation-card"><div className="variation-caption"><span className="variation-index">01</span><div><h3>Tree only</h3><p>Explore the data without surrounding controls.</p></div></div><JsonGlance data={galleryData} defaultExpandedDepth={1} minimal rootLabel="response" theme="light" maxHeight={220} /><code>minimal</code></article>
             <article className="variation-card"><div className="variation-caption"><span className="variation-index">02</span><div><h3>After hours</h3><p>A native dark theme for developer tools.</p></div></div><JsonGlance data={galleryData} defaultExpandedDepth={1} searchable={false} rootLabel="response" theme="dark" maxHeight={220} /><code>theme="dark"</code></article>
             <article className="variation-card"><div className="variation-caption"><span className="variation-index">03</span><div><h3>Start with the shape</h3><p>Let people choose what to explore.</p></div></div><JsonGlance data={galleryAccountData} defaultExpandedDepth={0} searchable={false} rootLabel="account" theme="light" maxHeight={220} /><code>defaultExpandedDepth={'{0}'}</code></article>
           </div>

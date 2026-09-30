@@ -14,6 +14,14 @@ export interface JsonGlanceProps {
   defaultExpandedDepth?: number;
   /** Show key/value/path search. Default: true. */
   searchable?: boolean;
+  /** Show only the tree by default, hiding toolbar, footer, and path navigation. Default: false. */
+  minimal?: boolean;
+  /** Show the search and global actions toolbar. Default: !minimal. */
+  showToolbar?: boolean;
+  /** Show the selected path, node counts, and detail actions footer. Default: !minimal. */
+  showFooter?: boolean;
+  /** Show the exact-path navigation form. Default: !minimal. */
+  showPathNavigation?: boolean;
   /** Enable copy JSON, selected value, and selected path. Default: true. */
   copyable?: boolean;
   /** Show type labels alongside syntax colors. Default: true. */

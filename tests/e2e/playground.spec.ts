@@ -151,6 +151,7 @@ test('live configuration changes theme, expansion, controls, and the generated R
   await expect(code).toContainText('defaultExpandedDepth={0}');
   await expect(code).toContainText('maxHeight={320}');
   await expect(code).toContainText('stringLimit={80}');
+  await expect(code).toContainText('minimal={false}');
   await expect(code).toContainText('searchable={false}');
   await expect(code).toContainText('copyable={false}');
   await expect(code).toContainText('showTypes={false}');
@@ -169,6 +170,82 @@ test('live configuration changes theme, expansion, controls, and the generated R
   await expect(inspector(page)).toHaveCSS('background-color', 'rgb(20, 27, 37)');
   await page.emulateMedia({ colorScheme: 'light' });
   await expect(inspector(page)).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+});
+
+test('tree-only view hides surrounding controls while preserving rows, keyboard navigation, and copying', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: 'http://127.0.0.1:4173' });
+  const fullRowCount = await inspector(page).getByRole('treeitem').count();
+  await inspector(page).getByRole('textbox', { name: 'Search JSON' }).fill('customer');
+  await expect.poll(() => inspector(page).getByRole('treeitem').count()).toBeLessThan(fullRowCount);
+  await page.locator('.configuration-panel').getByRole('checkbox', { name: /^Tree only/ }).check();
+
+  await expect(inspector(page).locator('.jg-toolbar')).toHaveCount(0);
+  await expect(inspector(page).locator('.jg-footer')).toHaveCount(0);
+  await expect(inspector(page).locator('.jg-path-form')).toHaveCount(0);
+  await expect(inspector(page).getByRole('textbox', { name: 'Search JSON' })).toHaveCount(0);
+  await expect(inspector(page).getByRole('button', { name: 'Expand all', exact: true })).toHaveCount(0);
+  await expect(inspector(page).getByRole('button', { name: 'Collapse all', exact: true })).toHaveCount(0);
+  await expect(inspector(page).getByRole('button', { name: 'Copy JSON', exact: true })).toHaveCount(0);
+  await expect(inspector(page).getByRole('button', { name: 'Copy selected path', exact: true })).toHaveCount(0);
+  await expect(inspector(page).getByRole('button', { name: 'Details', exact: true })).toHaveCount(0);
+  await expect(inspector(page).getByRole('treeitem')).toHaveCount(fullRowCount);
+  expect(await inspector(page).locator('.jg-type').count()).toBeGreaterThan(0);
+
+  const root = inspector(page).locator('[data-path="$"]');
+  await root.getByRole('button', { name: 'Collapse $', exact: true }).click();
+  await expect(root).toBeFocused();
+  await expect(inspector(page).getByRole('treeitem')).toHaveCount(1);
+  await root.press('ArrowRight');
+  await expect(root).toHaveAttribute('aria-expanded', 'true');
+  await root.press('ArrowDown');
+  const id = inspector(page).locator('[data-path="$.id"]');
+  await expect(id).toBeFocused();
+  await expect(specimen(page).locator('.selection-bar > code')).toHaveText('$.id');
+  const rowCopy = id.getByRole('button', { name: 'Copy value at $.id', exact: true });
+  await expect(rowCopy).toHaveAttribute('tabindex', '0');
+  await id.press('Tab');
+  await expect(rowCopy).toBeFocused();
+  await rowCopy.press('Enter');
+  await expect.poll(() => readClipboard(page)).toBe('txn_demo_8f21c4');
+
+  await specimen(page).getByRole('tab', { name: 'React code' }).click();
+  await expect(specimen(page).locator('.usage-code pre')).toContainText('minimal={true}');
+  await specimen(page).getByRole('tab', { name: 'Inspector', exact: true }).click();
+  await page.locator('.configuration-panel').getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(page.locator('.configuration-panel').getByRole('checkbox', { name: /^Tree only/ })).not.toBeChecked();
+  await expect(inspector(page).getByRole('textbox', { name: 'Search JSON' })).toBeVisible();
+  await expect(inspector(page).getByRole('textbox', { name: 'Go to path' })).toBeVisible();
+});
+
+test('tree-only view opens full values on request and restores normal controls when toggled off', async ({ page }) => {
+  await chooseExample(page, 'Long strings');
+  const treeOnly = page.locator('.configuration-panel').getByRole('checkbox', { name: /^Tree only/ });
+  await treeOnly.check();
+  await expect(inspector(page).locator('.jg-details')).toHaveCount(0);
+  await inspector(page).locator('[data-path="$.paragraph"]').getByRole('button', { name: 'Full value', exact: true }).click();
+  await expect(inspector(page).locator('.jg-details pre')).toHaveText(
+    'Structured data deserves a little clarity. Explore the shape, find the value, and keep the context. '.repeat(8),
+  );
+  await expect(inspector(page).getByRole('button', { name: 'Copy value', exact: true })).toBeVisible();
+  await inspector(page).getByRole('button', { name: 'Close details', exact: true }).click();
+  await expect(inspector(page).locator('.jg-details')).toHaveCount(0);
+  const paragraph = inspector(page).locator('[data-path="$.paragraph"]');
+  await expect(paragraph).toBeFocused();
+  await paragraph.press('Enter');
+  await expect(inspector(page).locator('.jg-details pre')).toBeVisible();
+  await expect(inspector(page).locator('.jg-toolbar')).toHaveCount(0);
+  await expect(inspector(page).locator('.jg-footer')).toHaveCount(0);
+  await expect(inspector(page).locator('.jg-path-form')).toHaveCount(0);
+
+  await treeOnly.uncheck();
+  await expect(inspector(page).getByRole('textbox', { name: 'Search JSON' })).toBeVisible();
+  await expect(inspector(page).getByRole('button', { name: 'Expand all', exact: true })).toBeVisible();
+  await expect(inspector(page).getByRole('button', { name: 'Collapse all', exact: true })).toBeVisible();
+  await expect(inspector(page).getByRole('button', { name: 'Copy JSON', exact: true })).toBeVisible();
+  await expect(inspector(page).getByRole('button', { name: 'Copy selected path', exact: true })).toBeVisible();
+  await expect(inspector(page).getByRole('button', { name: 'Details', exact: true })).toBeVisible();
+  await expect(inspector(page).getByRole('button', { name: 'Close details', exact: true })).toHaveCount(0);
+  await expect(inspector(page).getByRole('textbox', { name: 'Go to path' })).toBeVisible();
 });
 
 test('large data stays virtualized and a distant JSON path receives selection and focus', async ({ page }) => {

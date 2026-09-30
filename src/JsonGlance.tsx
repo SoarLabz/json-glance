@@ -31,6 +31,7 @@ function initialView(model: TreeModel): ViewState {
 
 function Inspector({
   model, defaultExpandedDepth = 2, searchable = true, copyable = true, showTypes = true,
+  minimal = false, showToolbar = !minimal, showFooter = !minimal, showPathNavigation = !minimal,
   theme = 'auto', maxHeight = 420, stringLimit = 160, ariaLabel = 'JSON data', className, style,
   onSelect, onCopy, onCopyError, copyText = writeClipboard
 }: JsonGlanceProps & { model: TreeModel }) {
@@ -48,7 +49,9 @@ function Inspector({
   // Reset expansion/selection for replacement data without a render using stale state.
   if (view.model !== model) { setView(initialView(model)); setScrollTop(0); }
   const current = view.model === model ? view : initialView(model);
-  const effectiveQuery = useDeferredValue(searchable ? query.trim() : '');
+  const deferredQuery = useDeferredValue(query.trim());
+  // Hiding search must immediately reveal the unfiltered tree, even during a deferred update.
+  const effectiveQuery = searchable && showToolbar ? deferredQuery : '';
   const search = useMemo(() => searchTree(model, effectiveQuery), [model, effectiveQuery]);
   const filtering = effectiveQuery.length > 0;
   const depth = bounded(defaultExpandedDepth, 2, 0, 65);
@@ -189,7 +192,7 @@ function Inspector({
   const visibleSelection = windowRows.some(node => node.id === selected.id);
   const detailText = typeof selected.value === 'string' ? selected.value : selected.display;
   return <section className={`jg-inspector${className ? ` ${className}` : ''}`} style={style} data-theme={theme}>
-    <div className="jg-toolbar">
+    {showToolbar && <div className="jg-toolbar">
       {searchable ? <div className="jg-search">
         <Icon name="search" />
         <input aria-label="Search JSON" placeholder="Search keys, values, or paths…" value={query} onChange={event => changeSearch(event.target.value)} />
@@ -200,7 +203,7 @@ function Inspector({
         <button type="button" className="jg-icon-button" aria-label="Collapse all" title="Collapse all" onClick={() => expandAll(false)}><Icon name="collapse" /></button>
         {copyable && <button type="button" className="jg-button" onClick={() => { void copy('json', model.root); }} disabled={copying}><Icon name="copy" /><span>Copy JSON</span></button>}
       </div>
-    </div>
+    </div>}
     {filtering && <div className="jg-search-summary" role="status">{search.matches.size} matching {search.matches.size === 1 ? 'node' : 'nodes'}{query.trim() !== effectiveQuery ? ' · Searching…' : ''}</div>}
     <div ref={viewport} className="jg-viewport" style={{ maxHeight: height }} role="tree" aria-label={ariaLabel}
       onScroll={event => setScrollTop(event.currentTarget.scrollTop)}>
@@ -228,29 +231,32 @@ function Inspector({
             <span className="jg-colon" aria-hidden="true">:</span>
             <NodeValue node={node} query={effectiveQuery} limit={limit} onDetails={() => { select(node); setDetails(true); }} />
             {showTypes && <span className={`jg-type jg-type-${node.type}`}>{node.type}</span>}
-            {copyable && <button type="button" tabIndex={-1} className="jg-icon-button jg-row-copy" aria-label={`Copy value at ${node.path}`}
+            {copyable && <button type="button" tabIndex={!showFooter && selected.id === node.id ? 0 : -1} className="jg-icon-button jg-row-copy" aria-label={`Copy value at ${node.path}`}
               disabled={copying} onClick={event => { event.stopPropagation(); void copy('value', node); }}><Icon name="copy" /></button>}
           </div>;
         })}
       </div>}
     </div>
     {model.warnings.length > 0 && <div className="jg-warning" role="status">{model.warnings.join(' ')}</div>}
-    <div className="jg-footer">
+    {showFooter && <div className="jg-footer">
       <span className="jg-selected-path" title={selected.path}>{selected.path}</span>
       <span className="jg-count">{rows.length.toLocaleString('en-US')} visible · {model.nodes.size.toLocaleString('en-US')} indexed</span>
       <div className="jg-footer-actions">
         <button type="button" className="jg-text-button" aria-expanded={details} onClick={() => setDetails(previous => !previous)}>Details</button>
         {copyable && <button type="button" className="jg-icon-button" aria-label="Copy selected path" title="Copy selected path" disabled={copying} onClick={() => { void copy('path'); }}><Icon name="link" /></button>}
       </div>
-    </div>
-    <form className="jg-path-form" onSubmit={event => { event.preventDefault(); goToPath(); }}>
+    </div>}
+    {showPathNavigation && <form className="jg-path-form" onSubmit={event => { event.preventDefault(); goToPath(); }}>
       <label htmlFor={`${uid}-path`}>Go to path</label>
       <input id={`${uid}-path`} value={pathInput} onChange={event => { setPathInput(event.target.value); setPathError(''); }} placeholder="$.customer.email" spellCheck={false} aria-invalid={Boolean(pathError)} aria-describedby={pathError ? `${uid}-path-error` : undefined} />
       <button type="submit" className="jg-icon-button" aria-label="Navigate to path"><Icon name="arrow" /></button>
-    </form>
-    {pathError && <div id={`${uid}-path-error`} className="jg-warning" role="alert">{pathError}</div>}
+    </form>}
+    {showPathNavigation && pathError && <div id={`${uid}-path-error`} className="jg-warning" role="alert">{pathError}</div>}
     {details && <div className="jg-details">
-      <div className="jg-detail-heading"><span>{selected.type} · {selected.path}</span>{copyable && <button type="button" className="jg-text-button" disabled={copying} onClick={() => { void copy('value'); }}>Copy value</button>}</div>
+      <div className="jg-detail-heading"><span>{selected.type} · {selected.path}</span><div className="jg-footer-actions">
+        {copyable && <button type="button" className="jg-text-button" disabled={copying} onClick={() => { void copy('value'); }}>Copy value</button>}
+        {!showFooter && <button type="button" className="jg-icon-button" aria-label="Close details" onClick={() => { setDetails(false); select(selected, true); }}><Icon name="close" /></button>}
+      </div></div>
       <pre>{detailText}</pre>
     </div>}
     <div className="jg-sr-only" role="status" aria-live="polite">{status}</div>

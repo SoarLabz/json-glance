@@ -144,6 +144,16 @@ function Inspector({
     // The new flattened tree is available after React commits the expansion.
     pendingFocus.current = true;
   }
+  function closeDetails() {
+    setDetails(false);
+    const visibleIds = new Set(rows.map(node => node.id));
+    let target = selected;
+    while (!visibleIds.has(target.id) && target.parentId !== null) {
+      target = model.nodes.get(target.parentId) ?? model.root;
+    }
+    if (visibleIds.has(target.id)) select(target, true);
+    else viewport.current?.focus();
+  }
   useEffect(() => {
     const element = viewport.current;
     if (!element) return;
@@ -205,7 +215,7 @@ function Inspector({
       </div>
     </div>}
     {filtering && <div className="jg-search-summary" role="status">{search.matches.size} matching {search.matches.size === 1 ? 'node' : 'nodes'}{query.trim() !== effectiveQuery ? ' · Searching…' : ''}</div>}
-    <div ref={viewport} className="jg-viewport" style={{ maxHeight: height }} role="tree" aria-label={ariaLabel}
+    <div ref={viewport} className="jg-viewport" style={{ maxHeight: height }} role="tree" aria-label={ariaLabel} tabIndex={rows.length === 0 ? 0 : undefined}
       onScroll={event => setScrollTop(event.currentTarget.scrollTop)}>
       {rows.length === 0 ? <div className="jg-empty">No matching keys or values.</div> : <div className="jg-tree-content" style={virtual ? { height: rows.length * ROW_HEIGHT, position: 'relative' } : undefined}>
         {windowRows.map((node, offset) => {
@@ -255,7 +265,7 @@ function Inspector({
     {details && <div className="jg-details">
       <div className="jg-detail-heading"><span>{selected.type} · {selected.path}</span><div className="jg-footer-actions">
         {copyable && <button type="button" className="jg-text-button" disabled={copying} onClick={() => { void copy('value'); }}>Copy value</button>}
-        {!showFooter && <button type="button" className="jg-icon-button" aria-label="Close details" onClick={() => { setDetails(false); select(selected, true); }}><Icon name="close" /></button>}
+        {!showFooter && <button type="button" className="jg-icon-button" aria-label="Close details" onClick={closeDetails}><Icon name="close" /></button>}
       </div></div>
       <pre>{detailText}</pre>
     </div>}

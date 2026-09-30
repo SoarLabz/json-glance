@@ -206,6 +206,27 @@ describe('JsonGlance', () => {
     expect(row('$.long')).toHaveFocus();
   });
 
+  it('restores detail focus to a visible ancestor or empty tree after the selected row is hidden', async () => {
+    const user = userEvent.setup();
+    const value = 'x'.repeat(200);
+    const data = { level1: { level2: { long: value } } };
+    const view = render(<JsonGlance data={data} />);
+    await user.type(screen.getByRole('textbox', { name: 'Search JSON' }), 'xxxxx');
+    await user.click(screen.getByRole('button', { name: 'Full value' }));
+    view.rerender(<JsonGlance data={data} minimal />);
+    expect(row('$.level1.level2.long')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Close details' }));
+    expect(row('$.level1.level2')).toHaveFocus();
+
+    view.rerender(<JsonGlance data={data} showFooter={false} />);
+    await user.click(screen.getByRole('button', { name: 'Full value' }));
+    await user.clear(screen.getByRole('textbox', { name: 'Search JSON' }));
+    await user.type(screen.getByRole('textbox', { name: 'Search JSON' }), 'not-found');
+    expect(within(tree()).queryByRole('treeitem')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Close details' }));
+    expect(tree()).toHaveFocus();
+  });
+
   it('keeps safety warnings and copy failures visible in minimal mode', async () => {
     const user = userEvent.setup();
     const copyText = vi.fn<(text: string) => Promise<void>>().mockRejectedValue(new Error('Clipboard denied.'));

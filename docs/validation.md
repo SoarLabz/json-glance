@@ -6,7 +6,7 @@ Validated on September 30, 2026, using Node.js 22.23.1 and a clean `npm ci` inst
 | --- | --- |
 | ESLint | Passed with zero warnings. |
 | Strict TypeScript | Passed for the library, playground, unit tests and browser tests. |
-| Unit/component/release tests | 68 passed across four files. |
+| Unit/component/release tests | 69 passed across four files. |
 | Library build | Passed; ESM, declarations and CSS generated. |
 | Playground production build | Passed, using the package exports rather than source aliases. |
 | Chromium desktop/mobile | 20 passed, no skipped scenarios. |

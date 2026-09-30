@@ -1,0 +1,90 @@
+{
+  "name": "json-glance",
+  "version": "1.0.0",
+  "size": 20834,
+  "unpackedSize": 67527,
+  "shasum": "bd45664bbc7d9e6013dfb58a823e0d334df94be7",
+  "integrity": "sha512-qjoKKvAZZ1cBbxPaTKXF9RaTDoCTNMAURVqugmaM4HvvSWcFMuIDnRadTTGnm0dR4R0lBXD0N1aP7xziMzeAaw==",
+  "files": [
+    {
+      "path": "LICENSE",
+      "size": 1065,
+      "mode": 420
+    },
+    {
+      "path": "README.md",
+      "size": 14101,
+      "mode": 420
+    },
+    {
+      "path": "dist/clipboard.d.ts",
+      "size": 158,
+      "mode": 420
+    },
+    {
+      "path": "dist/clipboard.js",
+      "size": 1129,
+      "mode": 420
+    },
+    {
+      "path": "dist/icons.d.ts",
+      "size": 280,
+      "mode": 420
+    },
+    {
+      "path": "dist/icons.js",
+      "size": 740,
+      "mode": 420
+    },
+    {
+      "path": "dist/index.d.ts",
+      "size": 197,
+      "mode": 420
+    },
+    {
+      "path": "dist/index.js",
+      "size": 60,
+      "mode": 420
+    },
+    {
+      "path": "dist/JsonGlance.d.ts",
+      "size": 225,
+      "mode": 420
+    },
+    {
+      "path": "dist/JsonGlance.js",
+      "size": 18463,
+      "mode": 420
+    },
+    {
+      "path": "dist/model.d.ts",
+      "size": 1976,
+      "mode": 420
+    },
+    {
+      "path": "dist/model.js",
+      "size": 16056,
+      "mode": 420
+    },
+    {
+      "path": "dist/styles.css",
+      "size": 7981,
+      "mode": 420
+    },
+    {
+      "path": "dist/types.d.ts",
+      "size": 2477,
+      "mode": 420
+    },
+    {
+      "path": "dist/types.js",
+      "size": 11,
+      "mode": 420
+    },
+    {
+      "path": "package.json",
+      "size": 2608,
+      "mode": 420
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+name: Publish release to npm
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: npm-release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    if: ${{ !github.event.release.prerelease && !github.event.release.draft }}
+    uses: ./.github/workflows/validate.yml
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          registry-url: https://registry.npmjs.org
+      - name: Use the pinned package manager
+        run: npm install --global npm@11.20.0
+      - name: Verify tag, version, checkout and main ancestry
+        run: npm run release:check
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: npm-package
+          path: release-package
+      - name: Publish the validated tarball
+        run: npm publish "release-package/json-glance-$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version').tgz" --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
